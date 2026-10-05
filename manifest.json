@@ -1,0 +1,21 @@
+{
+  "name": "KOKO: Play. Sing. Learn. Grow.",
+  "short_name": "KOKO",
+  "description": "Lovable AI friend for kids that keeps them entertained while naturally helping them learn.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#e0f2fe",
+  "theme_color": "#38bdf8",
+  "icons": [
+    {
+      "src": "assets/koko_happy.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/koko_hero.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

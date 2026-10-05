@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KOKO: Play. Sing. Learn. Grow. - AI Friend for Kids</title>
+  <link rel="stylesheet" href="koko.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/koko_happy.png">
+  <meta name="theme-color" content="#38bdf8">
+</head>
+<body>
+
+  <!-- Confetti Celebration Overlay -->
+  <div id="confettiOverlay"></div>
+
+  <!-- Mobile Phone Container -->
+  <main class="app-container">
+
+    <!-- Top Status Bar -->
+    <header class="app-header">
+      <div class="brand-badge" onclick="kokoApp.showScreen('screenHome')" style="cursor: pointer;">
+        <img src="assets/koko_logo.png" alt="KOKO" class="brand-logo-img">
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="user-star-pill">
+          <span>⭐</span>
+          <span class="star-count">0</span>
+        </div>
+        <button id="btnToggleSound" class="btn-sound-toggle" title="Sound Toggle">🔊</button>
+      </div>
+    </header>
+
+    <!-- App Content Scrollable Views -->
+    <div class="app-content">
+
+      <!-- SCREEN 1: SPLASH SCREEN -->
+      <section id="screenSplash" class="app-screen active">
+        <div class="splash-content">
+          <img src="assets/koko_logo.png" alt="Koko" class="splash-logo">
+          <img src="assets/koko_hero.png" alt="Koko waving" class="splash-hero-img">
+          <h1 class="splash-tagline">Play. Sing. Learn. Grow.</h1>
+          <p class="splash-desc">
+            Your friendly AI companion who sings, tells magical stories, helps with maths, and makes learning an adventure!
+          </p>
+          <button class="btn-bubble btn-bubble-blue" style="width: 100%; max-width: 280px;" onclick="kokoApp.showScreen('screenOnboarding')">
+            Create Account 🚀
+          </button>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: ONBOARDING / ACCOUNT SETUP (CLEAN AS NEW) -->
+      <section id="screenOnboarding" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenSplash')">◀</button>
+          <h3>Welcome to KOKO! 👋</h3>
+        </div>
+
+        <div class="onboard-card">
+          <p style="font-size: 0.95rem; color: var(--text-muted);">
+            Let's set up your child's profile! Recording begins immediately.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label">What is your child's name?</label>
+            <input type="text" id="onboardNameInput" class="form-input" placeholder="e.g. David, Amara, Chidi" value="David">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">How old is your child?</label>
+            <select id="onboardAgeSelect" class="form-input">
+              <option value="5">Age 5 (Early Learner)</option>
+              <option value="6">Age 6 (Starter)</option>
+              <option value="7" selected>Age 7 (Explorer)</option>
+              <option value="8">Age 8 (Junior Champ)</option>
+              <option value="9">Age 9 (Adventurer)</option>
+              <option value="10">Age 10 (Master)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Choose Koko's mood for you:</label>
+            <div class="avatar-selector-row">
+              <div class="onboard-avatar-opt selected" data-src="assets/koko_happy.png" onclick="kokoApp.selectOnboardAvatar('assets/koko_happy.png')">
+                <img src="assets/koko_happy.png" alt="Happy Koko">
+              </div>
+              <div class="onboard-avatar-opt" data-src="assets/koko_thinking.png" onclick="kokoApp.selectOnboardAvatar('assets/koko_thinking.png')">
+                <img src="assets/koko_thinking.png" alt="Thinking Koko">
+              </div>
+              <div class="onboard-avatar-opt" data-src="assets/koko_excited.png" onclick="kokoApp.selectOnboardAvatar('assets/koko_excited.png')">
+                <img src="assets/koko_excited.png" alt="Excited Koko">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Set Parent PIN (4 digits for Parent Zone):</label>
+            <input type="password" id="onboardPinInput" class="form-input" maxlength="4" value="1234">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Default PIN is 1234.</span>
+          </div>
+
+          <button class="btn-bubble btn-bubble-blue" style="width: 100%; margin-top: 10px;" onclick="kokoApp.finishOnboarding()">
+            Start Adventure! ✨
+          </button>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: HOME SCREEN -->
+      <section id="screenHome" class="app-screen">
+        <div class="home-greeting-card">
+          <div class="home-avatar-circle">
+            <img src="assets/koko_happy.png" class="koko-dynamic-avatar" alt="Koko">
+          </div>
+          <div class="home-greeting-text">
+            <h2>Hi <span class="child-name-text">David</span>! 👋</h2>
+            <p>What would you like to do today?</p>
+          </div>
+        </div>
+
+        <!-- Daily Goal & Streak Banner -->
+        <div class="streak-goal-card">
+          <div class="streak-left">
+            <div class="streak-title">Today's Adventure ⏱️ <span id="todayGoalText">0 / 10 mins</span></div>
+            <div class="streak-bar-bg">
+              <div id="todayGoalProgress" class="streak-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="streak-badge">
+            <span id="streakDaysVal">1 day streak</span> 🔥
+          </div>
+        </div>
+
+        <!-- 6 Main Big Action Buttons -->
+        <div class="home-tiles-grid">
+          <button class="home-tile tile-sing" onclick="kokoApp.showScreen('screenSing')">
+            <span class="tile-icon">🎵</span>
+            <span class="tile-label">Sing</span>
+          </button>
+
+          <button class="home-tile tile-maths" onclick="kokoApp.showScreen('screenMaths')">
+            <span class="tile-icon">🧮</span>
+            <span class="tile-label">Maths</span>
+          </button>
+
+          <button class="home-tile tile-story" onclick="kokoApp.showScreen('screenStory')">
+            <span class="tile-icon">📖</span>
+            <span class="tile-label">Story</span>
+          </button>
+
+          <button class="home-tile tile-play" onclick="kokoApp.showScreen('screenPlay')">
+            <span class="tile-icon">🎮</span>
+            <span class="tile-label">Play</span>
+          </button>
+
+          <button class="home-tile tile-quiz" onclick="kokoApp.showScreen('screenQuiz')">
+            <span class="tile-icon">🧠</span>
+            <span class="tile-label">Quiz</span>
+          </button>
+
+          <button class="home-tile tile-talk" onclick="kokoApp.showScreen('screenTalk')">
+            <span class="tile-icon">💬</span>
+            <span class="tile-label">Talk</span>
+          </button>
+        </div>
+
+        <!-- African Cultural Languages Banner -->
+        <div class="culture-banner" onclick="kokoApp.showScreen('screenLanguage')">
+          <div class="culture-info">
+            <h4>🇳🇬 Learn African Languages!</h4>
+            <p>Igbo • Yoruba • Hausa • Nigerian Pidgin</p>
+          </div>
+          <span style="font-size: 1.8rem;">🌍</span>
+        </div>
+      </section>
+
+      <!-- SCREEN 4: TALK TO KOKO (VOICE CONVERSATION) -->
+      <section id="screenTalk" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Talk to Koko 💬</h3>
+        </div>
+
+        <div class="koko-head-hero">
+          <img src="assets/koko_happy.png" class="koko-dynamic-avatar" alt="Koko animated face">
+        </div>
+
+        <div class="chat-history-box" id="chatMessages"></div>
+
+        <!-- Voice Sound Waves -->
+        <div class="voice-wave-container" id="voiceWaveAnim">
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+        </div>
+
+        <!-- Big Mic Button -->
+        <div class="mic-action-center">
+          <button id="micButton" class="btn-big-mic" onclick="kokoApp.toggleMicrophone()" title="Tap to Speak">
+            🎙️
+          </button>
+          <span class="mic-label">Tap to Talk to Koko</span>
+        </div>
+
+        <!-- Quick Suggestions Pills -->
+        <div class="song-pills-row" style="margin-top: 6px;">
+          <button class="song-pill-btn" onclick="kokoApp.sendChatMessage('Koko, I am bored!')">I'm bored! 🥱</button>
+          <button class="song-pill-btn" onclick="kokoApp.sendChatMessage('Sing me a dinosaur song!')">Sing a dino song 🦖</button>
+          <button class="song-pill-btn" onclick="kokoApp.sendChatMessage('What is 25 plus 37?')">25 + 37? 🧮</button>
+          <button class="song-pill-btn" onclick="kokoApp.sendChatMessage('Teach me Igbo words')">Teach me Igbo 🟢</button>
+        </div>
+
+        <!-- Text Input Fallback -->
+        <div class="chat-input-bar">
+          <input type="text" id="chatTextInput" class="chat-input" placeholder="Type a message or question...">
+          <button id="chatSendBtn" class="btn-send">Send</button>
+        </div>
+      </section>
+
+      <!-- SCREEN 5: SINGING WITH KOKO -->
+      <section id="screenSing" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Sing with Koko 🎵</h3>
+        </div>
+
+        <!-- Song Category Selector Pills (All 8 Categories) -->
+        <div class="song-pills-row" id="songPills"></div>
+
+        <div class="song-player-card">
+          <img src="assets/koko_singing.png" id="singingKokoImg" class="singer-koko-img" alt="Koko singing">
+          <h2 id="songTitle">The Amazing Me</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            <span id="songCategory">Fun Songs</span> • <span id="songAuthor">Original • Koko</span>
+          </p>
+
+          <!-- Playback Controls (Previous, Play/Pause, Next) -->
+          <div class="player-controls-row">
+            <button class="btn-player-step" onclick="kokoApp.prevSong()" title="Previous Song">⏮️</button>
+            <button id="btnPlaySong" class="btn-bubble btn-bubble-pink" style="min-width: 170px;" onclick="kokoApp.toggleSongPlay()">
+              ▶️ Sing Together
+            </button>
+            <button class="btn-player-step" onclick="kokoApp.nextSong()" title="Next Song">⏭️</button>
+          </div>
+
+          <!-- Synchronized Karaoke Lyrics -->
+          <div class="karaoke-lyrics-box" id="karaokeLyrics"></div>
+        </div>
+      </section>
+
+      <!-- SCREEN 6: MATHS ACTIVITY -->
+      <section id="screenMaths" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Maths with Koko 🧮</h3>
+        </div>
+
+        <!-- 3 Maths Age Levels -->
+        <div class="song-pills-row">
+          <button class="song-pill-btn math-level-pill active" onclick="kokoApp.selectMathLevel(0)">Ages 5–6</button>
+          <button class="song-pill-btn math-level-pill" onclick="kokoApp.selectMathLevel(1)">Ages 7–8</button>
+          <button class="song-pill-btn math-level-pill" onclick="kokoApp.selectMathLevel(2)">Ages 9–10</button>
+        </div>
+
+        <div class="activity-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="user-star-pill" style="font-size: 0.8rem;" id="mathLevelBadge">Level 1: Starters</span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted);" id="mathProgressText">Question 1 of 4</span>
+          </div>
+
+          <h2 style="font-size: 1.15rem; color: #1e293b;" id="mathPrompt"></h2>
+
+          <!-- Visual Representation -->
+          <div class="math-visual-display" id="mathVisual"></div>
+
+          <!-- Choice Mode -->
+          <div id="mathChoiceBox">
+            <div class="math-options-grid" id="mathOptions"></div>
+          </div>
+
+          <!-- Typed Answer Mode -->
+          <div id="mathTypedBox" style="display: none; flex-direction: column; gap: 8px;">
+            <div class="math-typed-row">
+              <input type="number" id="mathTypedInput" class="math-typed-input" placeholder="Type answer...">
+              <button class="btn-bubble btn-bubble-green" onclick="kokoApp.checkTypedMathAnswer()">Submit</button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; gap: 8px;">
+            <!-- Socratic Hint Button -->
+            <button class="btn-bubble btn-bubble-blue" style="font-size: 0.85rem; padding: 10px 14px;" onclick="kokoApp.showMathHint()">
+              💡 "What should we do first?"
+            </button>
+            <!-- Toggle Mode -->
+            <button id="btnToggleMathMode" class="song-pill-btn" onclick="kokoApp.toggleMathInputMode()">
+              Type My Answer ⌨️
+            </button>
+          </div>
+
+          <!-- Feedback Box -->
+          <div id="mathFeedback" class="feedback-box" style="display: none;"></div>
+        </div>
+      </section>
+
+      <!-- SCREEN 7: STORY WORLD -->
+      <section id="screenStory" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Story World 📖</h3>
+        </div>
+
+        <div class="song-pills-row">
+          <button class="song-pill-btn active" onclick="kokoApp.switchStory(0)">🚀 Space</button>
+          <button class="song-pill-btn" onclick="kokoApp.switchStory(1)">🦁 African Adventure</button>
+          <button class="song-pill-btn" onclick="kokoApp.switchStory(2)">✨ Magic</button>
+        </div>
+
+        <div class="story-book-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="storyTitle" style="font-size: 1.25rem;">The Brave Little Girl</h2>
+            <span class="user-star-pill" style="font-size: 0.8rem;" id="storyCategory">Space</span>
+          </div>
+
+          <p class="story-narrative-text" id="storyNarrative"></p>
+
+          <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-top: 6px;">What should happen next?</h4>
+          <div class="story-choices-container" id="storyChoices"></div>
+        </div>
+      </section>
+
+      <!-- SCREEN 8: 3 MINI GAMES -->
+      <section id="screenPlay" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Mini Games 🎮</h3>
+        </div>
+
+        <!-- 3 Specified Games: Banana Math, Word Detective, Memory Match -->
+        <div class="song-pills-row">
+          <button class="song-pill-btn game-tab-btn active" data-game="bananaMath" onclick="kokoApp.selectGameTab('bananaMath')">Banana Math 🍌</button>
+          <button class="song-pill-btn game-tab-btn" data-game="wordDetective" onclick="kokoApp.selectGameTab('wordDetective')">Word Detective 🔎</button>
+          <button class="song-pill-btn game-tab-btn" data-game="memoryMatch" onclick="kokoApp.selectGameTab('memoryMatch')">Memory Match 🎴</button>
+        </div>
+
+        <!-- 1. Banana Math Card -->
+        <div id="bananaMathCard" class="activity-card">
+          <h2>Banana Math 🍌</h2>
+          <img src="assets/game_monkey.png" class="illustration-img" alt="Monkey">
+          <p id="bananaStory" style="font-size: 1rem; line-height: 1.5; color: #1e293b;"></p>
+          <h4 id="bananaQuestion" style="font-size: 1.05rem; color: var(--primary-blue);"></h4>
+          <div class="game-options-container" id="bananaOptions"></div>
+          <div id="bananaFeedback" class="feedback-box" style="display: none;"></div>
+        </div>
+
+        <!-- 2. Word Detective Card -->
+        <div id="wordDetectiveCard" class="activity-card" style="display: none;">
+          <h2>Word Detective 🔎</h2>
+          <p id="detectiveClue" style="font-size: 1.05rem; line-height: 1.5; color: #1e293b;"></p>
+          <div class="game-options-container" id="detectiveOptions"></div>
+          <div id="detectiveFeedback" class="feedback-box" style="display: none;"></div>
+        </div>
+
+        <!-- 3. Memory Match Card -->
+        <div id="memoryMatchCard" class="activity-card" style="display: none;">
+          <h2>Memory Match 🎴</h2>
+          <p style="font-size: 0.95rem; color: var(--text-muted);">Tap any card to flip it and find matching pairs!</p>
+          <div class="memory-grid" id="memoryGrid"></div>
+          <div id="memoryFeedback" class="feedback-box feedback-correct" style="display: none;"></div>
+        </div>
+      </section>
+
+      <!-- SCREEN 9: KOKO QUIZ -->
+      <section id="screenQuiz" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Koko Quiz 🧠</h3>
+        </div>
+
+        <div class="activity-card">
+          <img id="quizIllustration" src="assets/quiz_elephant.png" class="illustration-img" alt="Quiz Illustration">
+          <h2 id="quizQuestion" style="font-size: 1.2rem; text-align: center; color: #1e293b;">Which animal is the largest?</h2>
+          <div class="game-options-container" id="quizOptions"></div>
+          <div id="quizFeedback" class="feedback-box" style="display: none;"></div>
+        </div>
+      </section>
+
+      <!-- SCREEN 10: AFRICAN LANGUAGES -->
+      <section id="screenLanguage" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3 id="langTitle">Learn Igbo 🟢</h3>
+        </div>
+
+        <div class="song-pills-row" id="langTabs"></div>
+
+        <div class="lang-flashcard">
+          <div style="font-size: 3rem;">💧</div>
+          <div class="lang-word-native" id="langCardNative">Mmiri</div>
+          <div class="lang-word-phonetic" id="langCardPhonetic">Say it: "M-mee-ree"</div>
+          <div class="lang-word-english" id="langCardEnglish">Water</div>
+
+          <button class="btn-bubble btn-bubble-green" style="margin-top: 10px;" onclick="kokoApp.speakCurrentWord()">
+            🔊 Pronounce Word
+          </button>
+        </div>
+
+        <button class="btn-bubble btn-bubble-blue" style="width: 100%; margin-top: 12px;" onclick="kokoApp.nextLangWord()">
+          Next Word ➡️ (+1 ⭐)
+        </button>
+      </section>
+
+      <!-- SCREEN 11: CHILD PROGRESS (CHILD'S ROOM) -->
+      <section id="screenChildProgress" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>My Adventure Progress 🌟</h3>
+        </div>
+
+        <div class="child-progress-hero">
+          <div class="trophy-big">🏆</div>
+          <h2 id="childLevelTitle">Star Cadet</h2>
+          <p style="font-size: 0.95rem; font-weight: 700; color: #92400e;">
+            <span id="childTotalStars">0</span> Stars Collected • <span id="childStreak">1 Day Streak 🔥</span>
+          </p>
+          <div class="streak-bar-bg" style="width: 180px; height: 10px; margin-top: 6px;">
+            <div id="childLevelBar" class="streak-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.05rem; margin-top: 6px;">My Badges 🎖️</h3>
+        <div class="badges-grid" id="childBadgesGrid"></div>
+      </section>
+
+      <!-- SCREEN 12: CHILD PROFILE VIEW -->
+      <section id="screenChildProfile" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>My Profile 👤</h3>
+        </div>
+
+        <div class="child-profile-card">
+          <div class="profile-avatar-circle">
+            <img src="assets/koko_happy.png" class="koko-dynamic-avatar" alt="Koko">
+          </div>
+          <h2 id="profileChildName">David</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); font-weight: 700;">
+            <span id="profileChildAge">Age 7</span> • <span id="profileChildLevel">Star Cadet</span> • <span id="profileChildStars">0 Stars</span>
+          </p>
+
+          <button class="btn-bubble btn-bubble-blue" style="width: 100%; margin-top: 6px;" onclick="kokoApp.showScreen('screenOnboarding')">
+            ✏️ Edit Profile
+          </button>
+        </div>
+
+        <!-- Separate Protected Parent Zone Card -->
+        <div class="parent-zone-entry-card" onclick="kokoApp.showScreen('screenParentPin')">
+          <div>
+            <h4 style="font-size: 1rem; color: #5b21b6; font-weight: 800;">🔒 Parent Zone</h4>
+            <p style="font-size: 0.8rem; color: #6d28d9;">Weekly progress, AI insights & controls (PIN protected)</p>
+          </div>
+          <span style="font-size: 1.6rem;">🔐</span>
+        </div>
+      </section>
+
+      <!-- SCREEN 13: PARENT PIN GATE -->
+      <section id="screenParentPin" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenChildProfile')">◀</button>
+          <h3>Parent Access 🔐</h3>
+        </div>
+
+        <div class="pin-pad-container">
+          <p style="font-size: 0.95rem; color: var(--text-muted); text-align: center;">
+            Please enter your 4-digit PIN to access parent settings & progress reports.
+          </p>
+
+          <div class="pin-dots-row">
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+          </div>
+
+          <p id="pinError" style="font-size: 0.85rem; color: #ef4444; height: 18px;"></p>
+
+          <div class="pin-keypad">
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('1')">1</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('2')">2</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('3')">3</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('4')">4</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('5')">5</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('6')">6</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('7')">7</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('8')">8</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('9')">9</button>
+            <button class="pin-btn" style="font-size: 1rem;" onclick="kokoApp.clearPin()">⌫</button>
+            <button class="pin-btn" onclick="kokoApp.pressPinDigit('0')">0</button>
+            <button class="pin-btn" style="font-size: 1rem; color: #10b981;" onclick="kokoApp.showScreen('screenParentDashboard')">✓</button>
+          </div>
+
+          <span style="font-size: 0.78rem; color: #94a3b8;">Default PIN: 1234</span>
+        </div>
+      </section>
+
+      <!-- SCREEN 14: PARENT DASHBOARD & CONTROLS -->
+      <section id="screenParentDashboard" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenChildProfile')">◀</button>
+          <h3>Parent Dashboard 👨‍👩‍👧</h3>
+        </div>
+
+        <div class="parent-dashboard-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="parentChildName">David's Progress</h3>
+            <span class="user-star-pill" style="font-size: 0.75rem;">Active Plan</span>
+          </div>
+
+          <!-- Live Recorded Telemetry (Clean As New) -->
+          <div class="metric-grid">
+            <div class="metric-box">
+              <div class="metric-val" id="parentTime">0m</div>
+              <div class="metric-lbl">Learning Time</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val" id="parentSongs">0</div>
+              <div class="metric-lbl">Songs Played</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val" id="parentStories">0</div>
+              <div class="metric-lbl">Stories Read</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val" id="parentActivities">0</div>
+              <div class="metric-lbl">Activities Done</div>
+            </div>
+          </div>
+
+          <h4 style="font-size: 0.95rem; margin-top: 6px;">Live Subject Mastery</h4>
+
+          <div class="subject-bar-row">
+            <div class="subject-bar-header"><span>🧮 Maths</span><span id="valMath">0%</span></div>
+            <div class="subject-bar-bg"><div id="progMath" class="subject-bar-fill" style="width: 0%;"></div></div>
+          </div>
+
+          <div class="subject-bar-row">
+            <div class="subject-bar-header"><span>📚 Reading & Vocab</span><span id="valRead">0%</span></div>
+            <div class="subject-bar-bg"><div id="progRead" class="subject-bar-fill" style="width: 0%; background: #a855f7;"></div></div>
+          </div>
+
+          <div class="subject-bar-row">
+            <div class="subject-bar-header"><span>🧠 Problem Solving</span><span id="valSolve">0%</span></div>
+            <div class="subject-bar-bg"><div id="progSolve" class="subject-bar-fill" style="width: 0%; background: #10b981;"></div></div>
+          </div>
+
+          <div class="subject-bar-row">
+            <div class="subject-bar-header"><span>🎨 Creativity & Song</span><span id="valCreate">0%</span></div>
+            <div class="subject-bar-bg"><div id="progCreate" class="subject-bar-fill" style="width: 0%; background: #f59e0b;"></div></div>
+          </div>
+
+          <!-- Live AI Insights Box -->
+          <div class="ai-insight-box">
+            🌟 <strong>Koko's AI Learning Insight:</strong>
+            <p id="aiInsightText" style="margin-top: 4px;">
+              David has just started! Koko recommends beginning with a friendly 5-minute song or Level 1 math counting.
+            </p>
+          </div>
+
+          <h4 style="font-size: 0.95rem; margin-top: 8px;">Parental Controls 🛡️</h4>
+          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+            <span>⏱️ Daily Usage Limit</span>
+            <strong>2 Hours / Day</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+            <span>🌙 Bedtime Lock</span>
+            <strong>9:00 PM</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+            <span>🎙️ Voice Chat Permissions</span>
+            <strong style="color: #10b981;">Active (Safe Mode)</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+            <span>🛡️ Child Safety Filter</span>
+            <strong style="color: #10b981;">COPPA Compliant</strong>
+          </div>
+
+          <!-- Reset Account Button to Start Clean As New Anytime -->
+          <button class="btn-bubble btn-bubble-red" style="width: 100%; margin-top: 10px; font-size: 0.9rem;" onclick="kokoApp.resetAccount()">
+            🔄 Wipe & Start Clean As New Account
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Bottom Navigation Bar (Home, Progress, Profile) -->
+    <nav class="app-bottom-nav">
+      <button class="nav-btn active" data-screen="screenHome" onclick="kokoApp.showScreen('screenHome')">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+
+      <button class="nav-btn" data-screen="screenChildProgress" onclick="kokoApp.showScreen('screenChildProgress')">
+        <span class="nav-icon">🌟</span>
+        <span>Progress</span>
+      </button>
+
+      <button class="nav-btn" data-screen="screenChildProfile" onclick="kokoApp.showScreen('screenChildProfile')">
+        <span class="nav-icon">👤</span>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="koko-data.js"></script>
+  <script src="koko-audio.js"></script>
+  <script src="koko-app.js"></script>
+</body>
+</html>

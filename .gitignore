@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Other projects & archives in directory
+naijadirect/
+naijadirect.zip
+technocore-trader/
+token-intelligence/
+
+# Obsolete prototype files
+audio.js
+city-data.js
+engine.js
+game.js
+game.css
