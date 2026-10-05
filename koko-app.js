@@ -216,6 +216,9 @@ class KokoApp {
       this.updateKokoMood('excited');
     } else if (screenId === 'screenMaths') {
       this.updateKokoMood('thinking');
+    } else if (screenId === 'screenHomework') {
+      this.updateKokoMood('thinking');
+      this.renderHomeworkScreen();
     } else if (screenId === 'screenChildProgress') {
       this.renderChildProgressScreen();
     } else if (screenId === 'screenChildProfile') {
@@ -1109,6 +1112,12 @@ class KokoApp {
         insightText.textContent = `Great progress this week! ${this.child.name} has completed ${stats.activitiesCompleted} educational activities with Koko.`;
       }
     }
+
+    // Plan status indicator
+    const planDisplay = document.getElementById('parentPlanDisplay');
+    if (planDisplay) {
+      planDisplay.textContent = this.child.isPremium ? (this.child.planName || "Koko Premium (Active)") : "Free Starter";
+    }
   }
 
   // PIN Lock Pad for Parent Access
@@ -1170,6 +1179,229 @@ class KokoApp {
         if (e.key === 'Enter') sendAction();
       });
     }
+  }
+
+  // --- 📷 HOMEWORK SNAP & AI STEP-BY-STEP SOLVER (COMMERCIAL FEATURE) ---
+  renderHomeworkScreen() {
+    this.selectedHwSampleIdx = this.selectedHwSampleIdx || 0;
+    this.currentHwStepIdx = 0;
+    const sample = this.data.homeworkSamples[this.selectedHwSampleIdx];
+
+    document.getElementById('hwQuestionTitle').textContent = sample.title;
+    document.getElementById('hwQuestionSubject').textContent = sample.subject;
+    document.getElementById('hwQuestionText').textContent = sample.questionText;
+
+    this.renderHomeworkStep();
+  }
+
+  selectHomeworkSample(idx) {
+    this.audio.playCameraSnap();
+    this.selectedHwSampleIdx = idx;
+    this.currentHwStepIdx = 0;
+
+    const pills = document.querySelectorAll('.hw-sample-pill');
+    pills.forEach((p, i) => {
+      if (i === idx) p.classList.add('active');
+      else p.classList.remove('active');
+    });
+
+    // Simulated camera scan flash
+    const scanBox = document.getElementById('hwScanBox');
+    if (scanBox) {
+      scanBox.classList.add('scanning');
+      setTimeout(() => scanBox.classList.remove('scanning'), 700);
+    }
+
+    this.renderHomeworkScreen();
+    this.audio.speak("Homework photo scanned! Let's solve this together! What should we do first?");
+  }
+
+  triggerHomeworkCamera() {
+    this.audio.playCameraSnap();
+    this.showToast("📸 Photo captured! Scanning handwriting...");
+    const scanBox = document.getElementById('hwScanBox');
+    if (scanBox) {
+      scanBox.classList.add('scanning');
+      setTimeout(() => scanBox.classList.remove('scanning'), 700);
+    }
+    setTimeout(() => {
+      const nextIdx = ((this.selectedHwSampleIdx || 0) + 1) % this.data.homeworkSamples.length;
+      this.selectHomeworkSample(nextIdx);
+    }, 400);
+  }
+
+  renderHomeworkStep() {
+    const sample = this.data.homeworkSamples[this.selectedHwSampleIdx];
+    const step = sample.steps[this.currentHwStepIdx];
+    const container = document.getElementById('hwStepContainer');
+    const feedbackBox = document.getElementById('hwStepFeedback');
+    feedbackBox.style.display = 'none';
+
+    document.getElementById('hwStepProgressText').textContent = `Step ${this.currentHwStepIdx + 1} of ${sample.steps.length}`;
+    document.getElementById('hwStepPrompt').textContent = step.prompt;
+
+    const optsContainer = document.getElementById('hwStepOptions');
+    optsContainer.innerHTML = step.options.map(opt => `
+      <button class="math-opt-btn" onclick="kokoApp.checkHomeworkStep('${opt}')">
+        ${opt}
+      </button>
+    `).join('');
+  }
+
+  checkHomeworkStep(chosen) {
+    const sample = this.data.homeworkSamples[this.selectedHwSampleIdx];
+    const step = sample.steps[this.currentHwStepIdx];
+    const isCorrect = chosen === step.correct;
+    const feedbackBox = document.getElementById('hwStepFeedback');
+    feedbackBox.style.display = 'block';
+
+    if (isCorrect) {
+      this.recordActivity('math', true);
+      this.addStars(1);
+      this.audio.playSparkle();
+      this.audio.speak("Yes! That's the right step!");
+
+      feedbackBox.className = 'feedback-box feedback-correct';
+      if (this.currentHwStepIdx + 1 < sample.steps.length) {
+        feedbackBox.innerHTML = `
+          🎉 <strong>Correct!</strong> ${step.explanation}
+          <br><br>
+          <button class="btn-bubble btn-bubble-green" onclick="kokoApp.nextHomeworkStep()">Next Step ➡️</button>
+        `;
+      } else {
+        this.audio.playCheer();
+        this.addStars(2);
+        feedbackBox.innerHTML = `
+          🏆 <strong>Homework Complete!</strong> ${step.explanation}
+          <br><br>
+          <button class="btn-bubble btn-bubble-blue" onclick="kokoApp.showScreen('screenHome')">Back to Home 🏠</button>
+        `;
+      }
+    } else {
+      this.audio.playGentleTry();
+      this.audio.speak("Nice try! Think about what the question is asking first.");
+      feedbackBox.className = 'feedback-box feedback-try';
+      feedbackBox.innerHTML = `😊 <strong>Nice try!</strong> Let's read the clues carefully together.`;
+    }
+  }
+
+  nextHomeworkStep() {
+    this.currentHwStepIdx++;
+    this.renderHomeworkStep();
+  }
+
+  // --- 💳 COMMERCIAL PAYWALL & PAYSTACK CHECKOUT (INVESTOR SHOWCASE) ---
+  openSubscriptionModal() {
+    this.audio.playPop();
+    const modal = document.getElementById('paywallModal');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  closeSubscriptionModal() {
+    this.audio.playPop();
+    const modal = document.getElementById('paywallModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  openPaystackCheckout(planType = 'monthly') {
+    this.audio.playPop();
+    this.selectedPlanType = planType;
+    const checkoutModal = document.getElementById('paystackCheckoutModal');
+    const priceText = planType === 'annual' ? "₦31,500 / year" : "₦3,500 / month";
+    document.getElementById('checkoutAmountText').textContent = priceText;
+    if (checkoutModal) checkoutModal.style.display = 'flex';
+  }
+
+  closePaystackCheckout() {
+    const checkoutModal = document.getElementById('paystackCheckoutModal');
+    if (checkoutModal) checkoutModal.style.display = 'none';
+  }
+
+  processPaystackPayment() {
+    const btn = document.getElementById('btnConfirmPaystack');
+    btn.textContent = 'Processing Payment... 🔒';
+    btn.disabled = true;
+
+    // Simulate Paystack transaction verification
+    setTimeout(() => {
+      btn.textContent = 'Payment Successful! 🎉';
+      this.audio.playCashChime();
+      this.audio.playCheer();
+      this.triggerConfetti();
+
+      this.child.isPremium = true;
+      this.child.planName = this.selectedPlanType === 'annual' ? "Koko Premium Annual (Active)" : "Koko Premium Monthly (Active)";
+      this.saveProfile();
+
+      this.showToast("🌟 Upgraded to Koko Premium! All features unlocked!");
+
+      setTimeout(() => {
+        btn.textContent = 'Pay with Paystack';
+        btn.disabled = false;
+        this.closePaystackCheckout();
+        this.closeSubscriptionModal();
+        this.renderChildProfileScreen();
+        this.renderParentDashboard();
+      }, 1200);
+    }, 1500);
+  }
+
+  // --- 💼 INVESTOR PITCH DECK & TELEMETRY ROOM ---
+  openInvestorPortal() {
+    this.audio.playPop();
+    const portal = document.getElementById('investorPortalModal');
+    if (portal) portal.style.display = 'flex';
+  }
+
+  closeInvestorPortal() {
+    this.audio.playPop();
+    const portal = document.getElementById('investorPortalModal');
+    if (portal) portal.style.display = 'none';
+  }
+
+  // --- 🧠 DYNAMIC CUSTOM AI STORY & SONG GENERATOR ---
+  generateCustomAIStory() {
+    const hero = document.getElementById('storyHeroInput').value || "Amara";
+    const animal = document.getElementById('storyAnimalSelect').value || "clever cheetah";
+    const location = document.getElementById('storyLocationSelect').value || "in the magical forests of Calabar";
+    const lesson = document.getElementById('storyLessonSelect').value || "kindness to others";
+
+    this.audio.playPop();
+    this.showToast("✨ Koko is creating your magical story...");
+    this.updateKokoMood('excited');
+
+    const customStory = {
+      id: "custom_" + Date.now(),
+      title: `${hero} & the ${animal}`,
+      category: "AI Adventure",
+      intro: `Once upon a time, young ${hero} was exploring ${location}. Suddenly, a friendly ${animal} leapt out with a sparkling golden collar!`,
+      branches: {
+        root: {
+          text: `The ${animal} looked at ${hero} with kind glowing eyes and asked for help finding the Lost River of Wisdom. What should ${hero} do?`,
+          choices: [
+            { text: `🧭 Follow the ${animal}'s secret map through the tall grass`, next: "choice1" },
+            { text: `🍎 Share delicious fresh mangoes first`, next: "choice2" }
+          ]
+        },
+        choice1: {
+          text: `Together, ${hero} and the ${animal} crossed the river! They found a library of ancient star maps carved in stone. ${hero} learned that practicing ${lesson} creates true strength!`,
+          isEnd: true,
+          lesson: `Practicing ${lesson} brings courage and joy to every adventurer!`
+        },
+        choice2: {
+          text: `Sharing the mango made them best friends forever! The ${animal} gave ${hero} a magical feather of light.`,
+          isEnd: true,
+          lesson: `Sharing food and kindness builds friendships that last forever!`
+        }
+      }
+    };
+
+    this.data.stories.unshift(customStory);
+    this.selectedStoryIdx = 0;
+    this.currentStoryBranch = 'root';
+    this.showScreen('screenStory');
+    this.renderStoryScreen();
+    this.audio.speak(customStory.intro);
   }
 }
 

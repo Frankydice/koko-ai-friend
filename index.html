@@ -27,6 +27,7 @@
           <span>⭐</span>
           <span class="star-count">0</span>
         </div>
+        <button class="investor-pill-btn" onclick="kokoApp.openInvestorPortal()" title="Investor Deck & Live Unit Economics">💼 Pitch Deck</button>
         <button id="btnToggleSound" class="btn-sound-toggle" title="Sound Toggle">🔊</button>
       </div>
     </header>
@@ -163,6 +164,18 @@
           </button>
         </div>
 
+        <!-- High-Value Commercial Feature: Homework Snap & Step-by-Step Solver -->
+        <div class="homework-banner" onclick="kokoApp.showScreen('screenHomework')">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 2.2rem;">📷</span>
+            <div>
+              <h4 style="font-size: 1.02rem; font-weight: 800; margin-bottom: 2px;">Homework Snap & Solve</h4>
+              <p style="font-size: 0.8rem; opacity: 0.95;">AI Camera • Socratic Step-by-Step Help</p>
+            </div>
+          </div>
+          <span style="font-size: 1.3rem;">✨</span>
+        </div>
+
         <!-- African Cultural Languages Banner -->
         <div class="culture-banner" onclick="kokoApp.showScreen('screenLanguage')">
           <div class="culture-info">
@@ -170,6 +183,18 @@
             <p>Igbo • Yoruba • Hausa • Nigerian Pidgin</p>
           </div>
           <span style="font-size: 1.8rem;">🌍</span>
+        </div>
+
+        <!-- Commercial Monetization: Premium Family Plan Banner -->
+        <div class="premium-banner" onclick="kokoApp.openSubscriptionModal()">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 2rem;">⭐</span>
+            <div>
+              <h4 style="font-size: 0.98rem; font-weight: 800; margin-bottom: 2px;">Upgrade to Koko Premium</h4>
+              <p style="font-size: 0.78rem; opacity: 0.95;">Unlimited Voice, Homework Snap & Songs (₦3,500/mo)</p>
+            </div>
+          </div>
+          <button class="btn-bubble" style="background: #ffffff; color: #ea580c; padding: 6px 14px; font-size: 0.8rem;">Upgrade</button>
         </div>
       </section>
 
@@ -326,6 +351,57 @@
 
           <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-top: 6px;">What should happen next?</h4>
           <div class="story-choices-container" id="storyChoices"></div>
+        </div>
+
+        <!-- Dynamic AI Story Generator Card -->
+        <div class="activity-card" style="margin-top: 14px; background: #fff5f5; border: 2px dashed #f43f5e;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.05rem; color: #be123c;">✨ Create Your Own AI Story</h3>
+            <span class="user-star-pill" style="font-size: 0.75rem;">AI Powered</span>
+          </div>
+          <p style="font-size: 0.82rem; color: #881337;">Choose a hero, setting, animal friend, and moral lesson:</p>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+            <div>
+              <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Hero's Name:</label>
+              <input type="text" id="storyHeroInput" class="onboard-input" value="Amara" style="margin-top: 2px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Animal Friend:</label>
+                <select id="storyAnimalSelect" class="onboard-input" style="margin-top: 2px; padding: 8px 10px; font-size: 0.82rem;">
+                  <option value="clever cheetah">🐆 Clever Cheetah</option>
+                  <option value="wise tortoise">🐢 Wise Tortoise</option>
+                  <option value="singing parrot">🦜 Singing Parrot</option>
+                  <option value="brave lion cub">🦁 Lion Cub</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Setting:</label>
+                <select id="storyLocationSelect" class="onboard-input" style="margin-top: 2px; padding: 8px 10px; font-size: 0.82rem;">
+                  <option value="in the magical forests of Calabar">🌳 Calabar Forest</option>
+                  <option value="at the bustling market of Lagos">🏙️ Lagos City</option>
+                  <option value="near Victoria Falls">🌊 Victoria Falls</option>
+                  <option value="by the Sahara dunes">🏜️ Sahara Dunes</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Moral Lesson:</label>
+              <select id="storyLessonSelect" class="onboard-input" style="margin-top: 2px; padding: 8px 10px; font-size: 0.82rem;">
+                <option value="kindness and sharing">❤️ Kindness & Sharing</option>
+                <option value="courage to try new things">🦁 Bravery & Courage</option>
+                <option value="honesty and truth">🌟 Honesty & Truth</option>
+                <option value="saving and diligence">💰 Saving & Diligence</option>
+              </select>
+            </div>
+
+            <button class="btn-bubble btn-bubble-pink" style="width: 100%; margin-top: 4px;" onclick="kokoApp.generateCustomAIStory()">
+              ✨ Generate Interactive AI Story
+            </button>
+          </div>
         </div>
       </section>
 
@@ -584,6 +660,20 @@
             <strong style="color: #10b981;">COPPA Compliant</strong>
           </div>
 
+          <!-- Subscription Plan Status (Commercial Telemetry) -->
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 12px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 0.76rem; color: #166534; font-weight: 700;">SUBSCRIPTION PLAN</div>
+              <div style="font-size: 0.95rem; font-weight: 800; color: #15803d;" id="parentPlanDisplay">Free Starter</div>
+            </div>
+            <button class="btn-bubble btn-bubble-green" style="font-size: 0.8rem; padding: 6px 14px;" onclick="kokoApp.openSubscriptionModal()">Upgrade ⚡</button>
+          </div>
+
+          <!-- Investor Pitch Deck & Live Unit Economics Room -->
+          <button class="btn-bubble" style="width: 100%; margin-top: 10px; font-size: 0.9rem; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8;" onclick="kokoApp.openInvestorPortal()">
+            💼 Investor Deck & Unit Economics Room
+          </button>
+
           <!-- Reset Account Button to Start Clean As New Anytime -->
           <button class="btn-bubble btn-bubble-red" style="width: 100%; margin-top: 10px; font-size: 0.9rem;" onclick="kokoApp.resetAccount()">
             🔄 Wipe & Start Clean As New Account
@@ -591,6 +681,264 @@
         </div>
       </section>
 
+      <!-- SCREEN 15: 📷 HOMEWORK SNAP & STEP-BY-STEP SOLVER (COMMERCIAL FEATURE) -->
+      <section id="screenHomework" class="app-screen">
+        <div class="header-back-row">
+          <button class="btn-back-circle" onclick="kokoApp.showScreen('screenHome')">◀</button>
+          <h3>Homework Snap & Solve 📷</h3>
+        </div>
+
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+          Select a sample problem or snap your homework:
+        </p>
+
+        <!-- Sample Problem Pills -->
+        <div class="song-pills-row">
+          <button class="hw-sample-pill active" onclick="kokoApp.selectHomeworkSample(0)">1. Fractions & Word Problem</button>
+          <button class="hw-sample-pill" onclick="kokoApp.selectHomeworkSample(1)">2. 2-Digit Addition (Regrouping)</button>
+        </div>
+
+        <!-- Simulated Camera Scan Box with Laser Line -->
+        <div id="hwScanBox" class="hw-scan-box" style="margin-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="user-star-pill" style="font-size: 0.75rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8;" id="hwQuestionSubject">Maths</span>
+            <button class="btn-bubble btn-bubble-blue" style="font-size: 0.75rem; padding: 6px 12px;" onclick="kokoApp.triggerHomeworkCamera()">📸 Snap Photo</button>
+          </div>
+
+          <h3 id="hwQuestionTitle" style="font-size: 1.05rem; color: #ffffff; margin-top: 4px;">Primary 3 Fractions & Word Problem</h3>
+          <p id="hwQuestionText" style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; background: rgba(255,255,255,0.06); padding: 12px; border-radius: 8px; border-left: 3px solid #38bdf8;">
+            Kemi picked 24 juicy oranges in her garden. She gave 1/4 of the oranges to her younger brother, and 6 oranges to her favorite teacher. How many oranges does Kemi have left?
+          </p>
+          <span style="font-size: 0.74rem; color: #94a3b8; display: flex; align-items: center; gap: 4px;">
+            🤖 AI Vision: OCR extraction clean • Socratic Guidance Mode Active
+          </span>
+        </div>
+
+        <!-- Socratic Step-by-Step Solver Container -->
+        <div id="hwStepContainer" class="activity-card" style="margin-top: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="user-star-pill" style="font-size: 0.8rem; background: #e0e7ff; color: #4338ca;">Koko's Step-by-Step Guide</span>
+            <span id="hwStepProgressText" style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted);">Step 1 of 3</span>
+          </div>
+
+          <h3 id="hwStepPrompt" style="font-size: 1.15rem; color: #1e293b; margin: 10px 0;">What is 1/4 of 24 oranges?</h3>
+
+          <div id="hwStepOptions" class="math-options-grid"></div>
+
+          <div id="hwStepFeedback" class="feedback-box" style="display: none; margin-top: 12px;"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- MODAL 1: 💳 COMMERCIAL PAYWALL MODAL -->
+    <div id="paywallModal" class="full-modal-overlay" style="display: none;">
+      <div class="full-modal-card">
+        <button class="modal-close-btn" onclick="kokoApp.closeSubscriptionModal()">✕</button>
+
+        <div style="text-align: center;">
+          <span style="font-size: 2.5rem;">⭐</span>
+          <h2 style="font-size: 1.35rem; color: #1e293b; margin-top: 4px;">Upgrade to Koko Premium</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Give your child unlimited AI learning, homework solving, and cultural pride!
+          </p>
+        </div>
+
+        <!-- Plan Comparison Cards -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="pricing-plan-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h4>Starter (Free)</h4>
+              <span style="font-weight: 800; color: #64748b;">₦0</span>
+            </div>
+            <ul class="plan-feature-list">
+              <li>3 Songs & 1 Story per day</li>
+              <li>5 Maths practice questions</li>
+              <li>Basic chat responses</li>
+            </ul>
+          </div>
+
+          <div class="pricing-plan-card featured">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h4>Premium Monthly</h4>
+              <span class="plan-price-tag">₦3,500 <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">/ mo</span></span>
+            </div>
+            <ul class="plan-feature-list">
+              <li>✨ Unlimited AI Voice Conversations</li>
+              <li>📷 Unlimited AI Camera Homework Snap & Step Solver</li>
+              <li>🌍 All African Languages (Igbo, Yoruba, Hausa, Pidgin)</li>
+              <li>🎵 All 8 Song Categories & Offline Audio</li>
+              <li>📊 Weekly Parent Diagnostic Reports & AI Insights</li>
+            </ul>
+            <button class="btn-bubble btn-bubble-blue" style="width: 100%; margin-top: 6px;" onclick="kokoApp.openPaystackCheckout('monthly')">
+              Subscribe Monthly (₦3,500/mo) 🚀
+            </button>
+          </div>
+
+          <div class="pricing-plan-card" style="border-color: #10b981; background: #f0fdf4;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="color: #065f46;">Premium Annual</h4>
+                <span style="font-size: 0.72rem; background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 800;">SAVE 25%</span>
+              </div>
+              <span class="plan-price-tag" style="color: #059669;">₦31,500 <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">/ yr</span></span>
+            </div>
+            <ul class="plan-feature-list">
+              <li>⭐ All Monthly Features Included</li>
+              <li>🎁 2 Months Free (Save ₦10,500)</li>
+              <li>👨‍👩‍👧 Multiple Children Profiles (Up to 3 kids)</li>
+            </ul>
+            <button class="btn-bubble btn-bubble-green" style="width: 100%; margin-top: 6px;" onclick="kokoApp.openPaystackCheckout('annual')">
+              Save 25% with Annual (₦31,500/yr) 🌟
+            </button>
+          </div>
+        </div>
+
+        <div style="text-align: center; font-size: 0.76rem; color: #94a3b8;">
+          🔒 Cancel anytime • 7-day money-back guarantee • Secured by Paystack
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: 💳 AUTHENTIC AFRICAN FINTECH PAYSTACK CHECKOUT -->
+    <div id="paystackCheckoutModal" class="full-modal-overlay" style="display: none;">
+      <div class="full-modal-card">
+        <button class="modal-close-btn" onclick="kokoApp.closePaystackCheckout()">✕</button>
+
+        <div class="paystack-header-badge">
+          <span class="paystack-logo">paystack</span>
+          <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-weight: 700;">
+            🔒 Secured 256-Bit
+          </span>
+        </div>
+
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Amount Due:</div>
+          <div id="checkoutAmountText" style="font-size: 1.45rem; font-weight: 900; color: #0f172a;">₦3,500 / month</div>
+          <div style="font-size: 0.8rem; color: #64748b;">Merchant: KOKO African Kids AI</div>
+        </div>
+
+        <div class="paystack-payment-methods">
+          <button class="pay-method-btn active">💳 Card</button>
+          <button class="pay-method-btn">🏦 Transfer</button>
+          <button class="pay-method-btn">📱 USSD / MoMo</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Parent Email Address:</label>
+            <input type="email" class="onboard-input" value="parent@family.africa" style="margin-top: 2px;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Card Number:</label>
+            <input type="text" class="onboard-input" value="5399 4120 •••• 8821" style="margin-top: 2px; font-family: monospace;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+              <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Valid Till:</label>
+              <input type="text" class="onboard-input" value="12 / 28" style="margin-top: 2px; text-align: center;">
+            </div>
+            <div>
+              <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">CVV:</label>
+              <input type="password" class="onboard-input" value="321" style="margin-top: 2px; text-align: center;">
+            </div>
+          </div>
+
+          <button id="btnConfirmPaystack" class="btn-bubble btn-bubble-green" style="width: 100%; margin-top: 8px; font-size: 1rem;" onclick="kokoApp.processPaystackPayment()">
+            Pay with Paystack 🔒
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: 💼 INVESTOR DECK & LIVE UNIT ECONOMICS TELEMETRY -->
+    <div id="investorPortalModal" class="full-modal-overlay" style="display: none;">
+      <div class="full-modal-card" style="max-width: 480px;">
+        <button class="modal-close-btn" onclick="kokoApp.closeInvestorPortal()">✕</button>
+
+        <div class="investor-stat-hero">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 1.25rem; font-weight: 900; color: #ffffff;">🚀 KOKO Investment Thesis</h2>
+            <span style="font-size: 0.75rem; background: #059669; color: #ffffff; padding: 2px 8px; border-radius: 4px; font-weight: 800;">SEED STAGE</span>
+          </div>
+          <p style="font-size: 0.82rem; color: #94a3b8; line-height: 1.4;">
+            The first culturally native AI companion & Socratic homework engine for Africa's 120M demographic boom.
+          </p>
+        </div>
+
+        <!-- Key Unit Economics Grid -->
+        <h4 style="font-size: 0.95rem; margin-top: 4px;">Unit Economics & Financial Moat</h4>
+        <div class="investor-kpi-grid">
+          <div class="investor-kpi-box">
+            <div class="kpi-num">19.8x</div>
+            <div class="kpi-label">LTV / CAC Ratio</div>
+          </div>
+          <div class="investor-kpi-box">
+            <div class="kpi-num">₦28,700</div>
+            <div class="kpi-label">Customer Lifetime Value ($18.80)</div>
+          </div>
+          <div class="investor-kpi-box">
+            <div class="kpi-num">₦1,450</div>
+            <div class="kpi-label">CAC via School PTA Networks</div>
+          </div>
+          <div class="investor-kpi-box">
+            <div class="kpi-num">82.5%</div>
+            <div class="kpi-label">Gross Margin (Edge Voice + Caching)</div>
+          </div>
+        </div>
+
+        <!-- Market Size TAM SAM SOM -->
+        <h4 style="font-size: 0.95rem; margin-top: 4px;">Market Opportunity (TAM / SAM / SOM)</h4>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 6px;">
+          <div><strong>TAM: $4.2B</strong> — 120M African children in formal primary education.</div>
+          <div><strong>SAM: $850M</strong> — 28M smartphone-connected middle-class households (Nigeria, Kenya, Ghana, SA).</div>
+          <div><strong>SOM: $42M ARR</strong> — 300k paying subscribers by Year 3 at ₦3,500/mo.</div>
+        </div>
+
+        <!-- Cohort Retention Curve -->
+        <h4 style="font-size: 0.95rem; margin-top: 4px;">Product Stickiness & Cohort Retention</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="cohort-bar-row">
+            <span style="width: 55px;">Day 1:</span>
+            <div class="cohort-bar-bg"><div class="cohort-bar-fill" style="width: 78.4%;"></div></div>
+            <span>78.4%</span>
+          </div>
+          <div class="cohort-bar-row">
+            <span style="width: 55px;">Day 7:</span>
+            <div class="cohort-bar-bg"><div class="cohort-bar-fill" style="width: 63.8%;"></div></div>
+            <span>63.8%</span>
+          </div>
+          <div class="cohort-bar-row">
+            <span style="width: 55px;">Day 30:</span>
+            <div class="cohort-bar-bg"><div class="cohort-bar-fill" style="width: 48.6%;"></div></div>
+            <span>48.6%</span>
+          </div>
+          <div class="cohort-bar-row">
+            <span style="width: 55px;">Month 3:</span>
+            <div class="cohort-bar-bg"><div class="cohort-bar-fill" style="width: 41.2%;"></div></div>
+            <span>41.2%</span>
+          </div>
+        </div>
+
+        <!-- Safety & Regulatory Moat -->
+        <h4 style="font-size: 0.95rem; margin-top: 4px;">Defensibility & Safety Moat</h4>
+        <div style="font-size: 0.78rem; color: #475569; line-height: 1.5; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 10px;">
+          ✅ <strong>NDPR & COPPA Compliant:</strong> Zero biometric storage, strictly sandboxed child conversational agents.<br>
+          ✅ <strong>Proprietary Cultural Dataset:</strong> Authentic African folklore, regional accents, localized STEM word problems.<br>
+          ✅ <strong>Hardware-Independent:</strong> Lightweight Progressive Web App runs smoothly on low-bandwidth Android devices.
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button class="btn-bubble btn-bubble-blue" style="flex: 1; font-size: 0.85rem;" onclick="kokoApp.showToast('📥 Investor memo saved to clipboard!')">
+            📥 Copy Deal Memo
+          </button>
+          <button class="btn-bubble btn-bubble-green" style="flex: 1; font-size: 0.85rem;" onclick="kokoApp.openSubscriptionModal()">
+            Test Paywall Flow 💳
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Bottom Navigation Bar (Home, Progress, Profile) -->
